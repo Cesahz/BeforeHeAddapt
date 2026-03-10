@@ -130,7 +130,7 @@ class Mahoraga(EntidadCombate):
             self._hp_actual = 0
         
         #motor de adaptacion
-        if self.esta_vivo() and ataque.tags:
+        if self.esta_vivo and ataque.tags:
             hubo_giro = False
             for tag in ataque.tags:
                 nivel = self._rueda_adaptacion.get(tag,0)

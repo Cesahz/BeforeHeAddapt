@@ -55,7 +55,7 @@ class BeforeHeAdaptsEngine:
                 else:
                     self._ui.mostrar_log("> No tienes suficiente Energía Maldita. Pierdes el turno por ineficiencia.")
                 
-            if not self._enemigo.esta_vivo():
+            if not self._enemigo.esta_vivo:
                 self._estado = "VICTORIA"
                 break
             
@@ -82,7 +82,7 @@ class BeforeHeAdaptsEngine:
                     
                     #forzar adaptacion de mahoraga
                     if hasattr(self._enemigo, 'adaptar_defensa'):
-                        if self._enemigo.adaptar_a_defensa("Infinito"):
+                        if self._enemigo.adaptar_defensa("Infinito"):
                             self._ui.mostrar_log("  [SISTEMA] *CLACK* La rueda gira. Mahoraga analiza el espacio a tu alrededor...")
                 else:
                     self._ui.mostrar_log(f"{self._enemigo.nombre} contraatacó con {ataque_enemigo.nombre} y te causó {dano_recibido} de daño.")
@@ -90,7 +90,7 @@ class BeforeHeAdaptsEngine:
                 dano_recibido = self._jugador.recibir_dano(ataque_enemigo)
                 self._ui.mostrar_log(f"{self._enemigo.nombre} contraatacó con {ataque_enemigo.nombre} y te causó {dano_recibido} de daño.")
             
-            if not self._jugador.esta_vivo():
+            if not self._jugador.esta_vivo:
                 self._estado = "DERROTA"
                 break
                 
