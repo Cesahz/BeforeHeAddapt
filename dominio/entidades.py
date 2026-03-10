@@ -65,6 +65,28 @@ class Hechicero(EntidadCombate):
             self._hp_actual = 0
         return ataque.dano_base
 
+class Gojo(Hechicero):
+    def __init__(self):
+        super().__init__(nombre="Satoru Gojo", hp_maximo=1000, ce_maximo=4000)
+        self._infinito_activo = False
+    @property
+    def infinito_activo(self):
+        return self._infinito_activo
+    
+    def alternar_infinito(self):
+        """Enciende o apaga el infinito"""
+        self._infinito_activo = not self._infinito_activo
+        return self._infinito_activo
+    
+    def recibir_dano(self, ataque:Ataque) -> int:
+        if self._infinito_activo:
+            return 0
+        
+        return super(self.recibir_dano(ataque))
+    
+    
+    
+    
 class MaldicionMenor(EntidadCombate):
     def __init__(self):
         super().__init__(nombre="Maldicion Grado 3", hp_maximo=300)
