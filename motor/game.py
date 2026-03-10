@@ -16,10 +16,19 @@ class BeforeHeAdaptsEngine:
         while self._estado == "Activo":
             self._ui.limpiar_pantalla()
             self._ui.mostrar_estado(self._jugador,self._enemigo)
+            self._jugador.recuperar_ce(50)
             
             #turno del jugador
             self._ui.mostrar_log(f"Turno de {self._jugador.nombre}")
-            accion = self._ui.pedir_accion(self._jugador)  
+            accion = self._ui.pedir_accion(self._jugador)
+            
+            if hasattr(self._jugador, 'infinito_activo') and self._jugador.infinito_activo:
+                if self._jugador.gastar_ce(150):
+                    self._ui.mostrar_log("🌀 El Infinito consume 150 CE para mantenerse activo.")
+                else:
+                    self._jugador.alternar_infinito()
+                    self._ui.mostrar_log("⚠️ Te has quedado sin energía. El Infinito colapsa.")
+
             if accion == "INFINITO":
                 estado_infinito = self._jugador.alternar_infinito()
                 txt = "ENCENDIDO" if estado_infinito else "APAGADO"
@@ -38,12 +47,13 @@ class BeforeHeAdaptsEngine:
                         continue
                     multiplicador = 1.0
                     es_black_flash = False
-                    ataques_compatibles = ["Golpe Reforzado", "Golpe Blue"]
+                    ataques_compatibles = ["Golpe Reforzado", "Golpe Blue","Golpe Basico"]
                     
                     # black flash 
-                    if ataque_elegido.nombre in ataques_compatibles and random.randint(1,100) <= 5: 
+                    if ataque_elegido.nombre in ataques_compatibles and random.randint(1,100) <= 10:
                         multiplicador = 2.5
                         es_black_flash = True
+                        self._jugador.recuperar_ce(200)
                     
                     dano_calculado = int(ataque_elegido.dano_base * multiplicador)
                     ataque_temporal = Ataque(

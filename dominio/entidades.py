@@ -28,6 +28,12 @@ class EntidadCombate(ABC):
         self._hp_actual -= cantidad
         if self._hp_actual < 0:
             self._hp_actual = 0
+    
+    def recuperar_hp(self, cantidad: int):
+        """Regeneración de salud encapsulada"""
+        self._hp_actual += cantidad
+        if self._hp_actual > self._hp_maximo:
+            self._hp_actual = self._hp_maximo
 
     #polimorfismo, metodo que obliga a definir a los hijos como recibir dmg
     @abstractmethod
@@ -65,13 +71,19 @@ class Hechicero(EntidadCombate):
             return True
         return False
     
+    def recuperar_ce(self, cantidad: int):
+        """Recuperación natural o crítica de Energía Maldita"""
+        self._ce_actual += cantidad
+        if self._ce_actual > self._ce_maximo:
+            self._ce_actual = self._ce_maximo
+    
     def recibir_dano(self, ataque:Ataque) -> int:
         self._reducir_hp(ataque.dano_base)
         return ataque.dano_base
 
 class Gojo(Hechicero):
     def __init__(self):
-        super().__init__(nombre="Satoru Gojo", hp_maximo=1000, ce_maximo=4000)
+        super().__init__(nombre="Satoru Gojo", hp_maximo=1000, ce_maximo=2500)
         self._infinito_activo = False
     @property
     def infinito_activo(self):
@@ -99,7 +111,7 @@ class MaldicionMenor(EntidadCombate):
 #mahoraga
 class Mahoraga(EntidadCombate):
     def __init__(self):
-        super().__init__(nombre="General Divino Mahoraga", hp_maximo=1200)
+        super().__init__(nombre="General Divino Mahoraga", hp_maximo=1500)
         self._rueda_adaptacion = {}
         self._giros_totales = 0
     
@@ -133,16 +145,26 @@ class Mahoraga(EntidadCombate):
         #motor de adaptacion
         if self.esta_vivo and ataque.tags:
             hubo_giro = False
+            tags_inadaptables = ["Fisico", "Contundente", "Impacto_Puro"]
+            curo_este_ataque = False
+            
             for tag in ataque.tags:
-                nivel = self._rueda_adaptacion.get(tag,0)
+                if tag in tags_inadaptables:
+                    continue 
+                    
+                nivel = self._rueda_adaptacion.get(tag, 0)
                 if nivel < 4:
                     self._rueda_adaptacion[tag] = nivel + 1
                     hubo_giro = True
+                    
+                    #regeneracion por adaptacion
+                    if self._rueda_adaptacion[tag] == 4 and not curo_este_ataque:
+                        self.recuperar_hp(150)
+                        curo_este_ataque = True
             
             if hubo_giro:
                 self._giros_totales += 1
-        
-        #retornar dmg
+                
         return dano_final
         
     def adaptar_defensa(self,tag: str) -> bool:
