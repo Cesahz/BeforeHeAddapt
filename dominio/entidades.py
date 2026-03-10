@@ -19,6 +19,10 @@ class EntidadCombate(ABC):
     def esta_vivo(self) -> bool:
         return self._hp_actual > 0
     
+    @property
+    def hp_maximo(self):
+        return self._hp_maximo
+    
     #polimorfismo, metodo que obliga a definir a los hijos como recibir dmg
     @abstractmethod
     def recibir_dano(self, ataque: Ataque):
@@ -33,10 +37,6 @@ class Hechicero(EntidadCombate):
         self._tecnicas = [] #lista de objetos ataque
     
     #getters para la Ui
-    @property
-    def hp_maximo(self):
-        return self._hp_maximo
-    
     @property
     def ce_maximo(self):
         return self._ce_maximo
