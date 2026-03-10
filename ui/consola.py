@@ -76,3 +76,11 @@ class InterfazConsola:
 
     def mostrar_log(self, mensaje: str):
         self.registro_eventos.append(f"> {mensaje}")
+    
+    def preguntar_carga(self) -> bool:
+        print("\n💾 SISTEMA: Archivo de simulación previa detectado.")
+        while True:
+            opcion = input("   ¿Restaurar combate anterior? (S/N) >> ").upper()
+            if opcion == "S": return True
+            if opcion == "N": return False
+            print("   > Error: Ingresa S o N.")

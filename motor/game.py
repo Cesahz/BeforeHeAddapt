@@ -1,5 +1,7 @@
 from dominio.ataques import Ataque
+from motor.persistencia import GestorGuardado
 import random
+import os
 
 class BeforeHeAdaptsEngine:
     def __init__(self,jugador,enemigo,interfaz):
@@ -8,10 +10,18 @@ class BeforeHeAdaptsEngine:
         self._ui = interfaz
         self._estado = "Activo"
         self._turnos_aturdido = 0
+        self._gestor = GestorGuardado()
         
     def iniciar(self):
         self._ui.limpiar_pantalla()
         self._ui.mostrar_log("Iniciando Combate. . .")
+        
+        if os.path.exists(self._gestor.archivo):
+            if self._ui.preguntar_carga():
+                self._gestor.cargar(self._jugador, self._enemigo)
+                self._ui.mostrar_log("Simulación restaurada con éxito.")
+            else:
+                self._gestor.borrar()
         
         while self._estado == "Activo":
             self._ui.limpiar_pantalla()
@@ -110,11 +120,16 @@ class BeforeHeAdaptsEngine:
             else:
                 self._ui.mostrar_log(f"{self._enemigo.nombre} contraatacó con {ataque_enemigo.nombre} y te causó {dano_recibido} de daño.")
             
+            #autoguardado silencioso
+            if self._estado == "Activo":
+                self._gestor.guardar(self._jugador, self._enemigo)
+                
             if not self._jugador.esta_vivo:
                 self._estado = "DERROTA"
                 break
                 
         #fin
+        self._gestor.borrar()
         self._ui.limpiar_pantalla()
         self._ui.mostrar_estado(self._jugador, self._enemigo)
         mensaje_final = "Exorcismo completado." if self._estado == "VICTORIA" else "Te has convertido en una maldición..."
