@@ -28,8 +28,18 @@ class EntidadCombate(ABC):
 class Hechicero(EntidadCombate):
     def __init__(self, nombre:str,hp_maximo:int,ce_maximo:int):
         super().__init__(nombre, hp_maximo)
+        self._ce_maximo = ce_maximo
         self._ce_actual = ce_maximo
-        self._tecnicas = [] #lista de objetos
+        self._tecnicas = [] #lista de objetos ataque
+    
+    #getters para la Ui
+    @property
+    def tecnicas(self):
+        return self._tecnicas
+    
+    @property
+    def ce_actual(self):
+        return self._ce_actual
     
     def equipar_tecnica(self, tecnica:Ataque):
         self._tecnicas.append(tecnica)
@@ -45,6 +55,8 @@ class MaldicionMenor(EntidadCombate):
     
     def recibir_dano(self, ataque: Ataque):
         self._hp_actual -= ataque.dano_base
+        if self._hp_actual < 0:
+            self._hp_actual = 0
 
 #mahoraga
 class Mahoraga(EntidadCombate):
@@ -53,4 +65,20 @@ class Mahoraga(EntidadCombate):
         self._rueda_adaptacion = {}
     
     def recibir_dano(self, ataque):
-        pass
+        dano_final = ataque.dano_base
+        
+        #analizar ataque recibido
+        for tag in ataque.tags:
+            if tag in self._rueda_adaptacion:
+                #si el tag esta en la rueda, sigue adaptando o anula el dano
+                break
+    
+        #recibir impacto
+        self._hp_actual -= dano_final
+        if self._hp_actual < 0:
+            self._hp_actual = 0
+        
+        #girar la rueda
+        if dano_final > 0:
+            for tag in ataque.tags:
+                self._rueda_adaptacion[tag] = True
