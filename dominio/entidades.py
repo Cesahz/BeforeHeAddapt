@@ -22,7 +22,13 @@ class EntidadCombate(ABC):
     @property
     def hp_maximo(self):
         return self._hp_maximo
-    
+
+    #para no tener salud negativa
+    def _reducir_hp(self, cantidad: int):
+        self._hp_actual -= cantidad
+        if self._hp_actual < 0:
+            self._hp_actual = 0
+
     #polimorfismo, metodo que obliga a definir a los hijos como recibir dmg
     @abstractmethod
     def recibir_dano(self, ataque: Ataque):
@@ -60,9 +66,7 @@ class Hechicero(EntidadCombate):
         return False
     
     def recibir_dano(self, ataque:Ataque) -> int:
-        self._hp_actual -= ataque.dano_base
-        if self._hp_actual < 0:
-            self._hp_actual = 0
+        self._reducir_hp(ataque.dano_base)
         return ataque.dano_base
 
 class Gojo(Hechicero):
@@ -89,9 +93,7 @@ class MaldicionMenor(EntidadCombate):
         super().__init__(nombre="Maldicion Grado 3", hp_maximo=300)
     
     def recibir_dano(self, ataque: Ataque) -> int:
-        self._hp_actual -= ataque.dano_base
-        if self._hp_actual < 0:
-            self._hp_actual = 0
+        self._reducir_hp(ataque.dano_base) # Usamos la herramienta
         return ataque.dano_base
 
 #mahoraga
@@ -125,9 +127,8 @@ class Mahoraga(EntidadCombate):
             mitigacion_total = min(mitigacion_total, 1.0) #seguro por si acaso
         #aplicar dmg
         dano_final = int(ataque.dano_base * (1.0 - mitigacion_total))
-        self._hp_actual -= dano_final
-        if self._hp_actual < 0:
-            self._hp_actual = 0
+        
+        self._reducir_hp(dano_final)
         
         #motor de adaptacion
         if self.esta_vivo and ataque.tags:
@@ -151,3 +152,8 @@ class Mahoraga(EntidadCombate):
             self._giros_totales += 1
             return True
         return False
+    
+    def sufrir_vacio(self):
+        """Sobrecarga de información: borra las adaptaciones y reinicia la rueda."""
+        self._rueda_adaptacion.clear()
+        self._giros_totales = 0

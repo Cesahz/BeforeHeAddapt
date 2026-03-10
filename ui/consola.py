@@ -9,47 +9,54 @@ class InterfazConsola:
         os.system("cls" if os.name == "nt" else "clear")
 
     def _crear_barra(self, actual, maximo, longitud=20):
-        #crear barras de vida proporcional a la vida
-        llenos = int(longitud * (max(0, actual) / maximo))
-        return f"[{'█' * llenos}{'-' * (longitud - llenos)}]"
+        # crear barras de vida proporcional a la vida
+        vida_real = max(0, actual) # Evita que la barra intente dibujar valores negativos
+        llenos = int(longitud * (vida_real / maximo))
+        vacios = longitud - llenos
+        return f"[{'█' * llenos}{'-' * vacios}]"
 
     def mostrar_estado(self, hechicero, enemigo):
-        #calculo de variables complejas
+        # calculo de variables complejas
         hp_e = f"{self._crear_barra(enemigo.hp_actual, enemigo.hp_maximo)} {enemigo.hp_actual}/{enemigo.hp_maximo}"
         hp_h = f"{self._crear_barra(hechicero.hp_actual, hechicero.hp_maximo)} {hechicero.hp_actual}/{hechicero.hp_maximo}"
         ce_h = f"{self._crear_barra(hechicero.ce_actual, hechicero.ce_maximo)} {hechicero.ce_actual}/{hechicero.ce_maximo}"
         
-        #progreso de adaptacion
-        adaptaciones = ""
+        # progreso de adaptacion (Bucle tradicional, imposible de malinterpretar)
+        texto_adaptaciones = ""
         if hasattr(enemigo, 'adaptaciones') and enemigo.adaptaciones:
-            adaps_activas = ", ".join([f"{k.upper()}: Nivel {v}" for k, v in enemigo.adaptaciones.items() if v > 0])
-            if adaps_activas: 
-                adaptaciones = f"\n   ⚙️ ADAPTACIONES: {adaps_activas}"
+            lista_activas = []
+            for tag, nivel in enemigo.adaptaciones.items():
+                if nivel > 0:
+                    lista_activas.append(f"{tag.upper()}: Nivel {nivel}")
+            
+            if len(lista_activas) > 0: 
+                texto_adaptaciones = f"\n   ⚙️ ADAPTACIONES: {', '.join(lista_activas)}"
 
-        #string multi linea en print
+        # string multi linea en print
         print(f"""{"=" * 50}
 👹 ENEMIGO: {enemigo.nombre}
-   HP: {hp_e}{adaptaciones}
+   HP: {hp_e}{texto_adaptaciones}
 {"-" * 50}
 🧙‍♂️ JUGADOR: {hechicero.nombre}
    HP: {hp_h}
    CE: {ce_h}
 {"=" * 50}\n""")
 
-        #volcado de logs
+        # volcado de logs
         for evento in self.registro_eventos:
             time.sleep(0.3)
             print(evento)
         print()
         self.registro_eventos.clear()
 
-    def pedir_accion(self, hechicero) -> int | str:
+    def pedir_accion(self, hechicero):
         print("--- TUS TÉCNICAS ---")
         tiene_infinito = hasattr(hechicero, 'alternar_infinito')
         
-        #menu de tecnicas
+        # menu de tecnicas (Ternario extraído a una variable para lectura limpia)
         if tiene_infinito:
-            print(f" [0] Alternar Infinito (Estado: {'ON' if hechicero.infinito_activo else 'OFF'})")
+            estado_infinito = "ON" if hechicero.infinito_activo else "OFF"
+            print(f" [0] Alternar Infinito (Estado: {estado_infinito})")
 
         for i, t in enumerate(hechicero.tecnicas):
             print(f" [{i + 1}] {t.nombre} (Costo: {t.costo_ce} CE | Daño: {t.dano_base})")

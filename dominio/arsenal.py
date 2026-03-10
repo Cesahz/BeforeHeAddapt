@@ -1,55 +1,54 @@
 from dominio.ataques import Ataque
+
 #lista con tecnicas
 ataques_gojo = [
 
     Ataque(
         nombre="Golpe Basico",
-        costo_ce=30,
-        dano_base=35,
-        tags=["Fisico", "Contundente"]
+        costo_ce=0, 
+        dano_base=40,
+        tags=["Fisico"] 
     ),
 
     Ataque(
         nombre="Golpe Reforzado",
-        costo_ce=60,
-        dano_base=70,
+        costo_ce=100,
+        dano_base=80,
         tags=["Fisico", "Impacto_Puro"]
     ),
 
     Ataque(
         nombre="Golpe Blue",
-        costo_ce=90,
-        dano_base=85,
-        tags=["Fisico", "Compresion","Convergencia"]
+        costo_ce=200,
+        dano_base=120,
+        tags=["Fisico", "Espacio"]
     ),
 
     Ataque(
         nombre="Blue",
-        costo_ce=120,
-        dano_base=110,
-        tags=["Atraccion", "Compresion", "Convergencia","Espacio"]
+        costo_ce=400,
+        dano_base=180,
+        tags=["Espacio", "Atraccion"] 
     ),
 
     Ataque(
         nombre="Red",
-        costo_ce=150,
-        dano_base=160,
-        tags=["Espacio", "Explosivo","Divergencia","Conjuro Inverso"]
+        costo_ce=600,
+        dano_base=250,
+        tags=["Espacio", "Repulsion"]
     ),
 
     Ataque(
         nombre="Hollow Purple",
-        costo_ce=300,
-        dano_base=400,
-        tags=["Desintegracion","Espacio","Vacio"]
+        costo_ce=1100, 
+        dano_base=600,
+        tags=["Espacio", "Masa_Virtual"]
     ),
-
-
 
     Ataque(
         nombre="Unlimited Void",
-        costo_ce=500,
+        costo_ce=2500,
         dano_base=0,
-        tags=["Sobrecarga_Informacion","Dominio","Vacio"]
+        tags=["Dominio", "Vacio"]
     )
 ]
