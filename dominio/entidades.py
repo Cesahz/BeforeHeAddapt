@@ -44,41 +44,77 @@ class Hechicero(EntidadCombate):
     def equipar_tecnica(self, tecnica:Ataque):
         self._tecnicas.append(tecnica)
     
-    def recibir_dano(self, ataque:Ataque):
+    def gastar_ce(self, costo: int) -> bool:
+        """Descuenta energia por ataque, true si tiene suficiente, false si no"""
+        if self._ce_actual >= costo:
+            self._ce_actual -= costo
+            return True
+        return False
+    
+    def recibir_dano(self, ataque:Ataque) -> int:
         self._hp_actual -= ataque.dano_base
         if self._hp_actual < 0:
             self._hp_actual = 0
+        return ataque.dano_base
 
 class MaldicionMenor(EntidadCombate):
     def __init__(self):
         super().__init__(nombre="Maldicion Grado 3", hp_maximo=300)
     
-    def recibir_dano(self, ataque: Ataque):
+    def recibir_dano(self, ataque: Ataque) -> int:
         self._hp_actual -= ataque.dano_base
         if self._hp_actual < 0:
             self._hp_actual = 0
+        return ataque.dano_base
 
 #mahoraga
 class Mahoraga(EntidadCombate):
     def __init__(self):
         super().__init__(nombre="General Divino Mahoraga", hp_maximo=1200)
         self._rueda_adaptacion = {}
+        self._giros_totales = 0
     
-    def recibir_dano(self, ataque):
-        dano_final = ataque.dano_base
-        
-        #analizar ataque recibido
-        for tag in ataque.tags:
-            if tag in self._rueda_adaptacion:
-                #si el tag esta en la rueda, sigue adaptando o anula el dano
-                break
+    #getter para que la ui pueda leer adaptaciones
+    @property
+    def adaptaciones(self):
+        return self._rueda_adaptacion
     
-        #recibir impacto
+    @property
+    def giros_totales(self):
+        return self._giros_totales
+    
+    def recibir_dano(self, ataque) -> int:
+        mitigacion_total = 0.0
+        if ataque.tags:
+            suma_mitigacion = 0.0
+            for tag in ataque.tags:
+                #si no existe se come todo el dmg
+                nivel_actual = self._rueda_adaptacion.get(tag,0)
+                #por cada giro otorga 25% de resistencia
+                mitigacion_tag = min(nivel_actual*0.25, 1.0)
+                suma_mitigacion += mitigacion_tag
+            #promedio de mitigacion, reduce dmg proporcional a los tags adaptados
+            mitigacion_total = suma_mitigacion / len(ataque.tags)
+            mitigacion_total = min(mitigacion_total, 1.0) #seguro por si acaso
+        #aplicar dmg
+        dano_final = int(ataque.dano_base * (1.0 - mitigacion_total))
         self._hp_actual -= dano_final
         if self._hp_actual < 0:
             self._hp_actual = 0
         
-        #girar la rueda
-        if dano_final > 0:
+        #motor de adaptacion
+        if self.esta_vivo() and ataque.tags:
+            hubo_giro = False
             for tag in ataque.tags:
-                self._rueda_adaptacion[tag] = True
+                nivel = self._rueda_adaptacion.get(tag,0)
+                if nivel < 4:
+                    self._rueda_adaptacion[tag] = nivel + 1
+                    hubo_giro = True
+            
+            if hubo_giro:
+                self._giros_totales += 1
+        
+        #retornar dmg
+        return dano_final
+        
+        
