@@ -34,6 +34,14 @@ class Hechicero(EntidadCombate):
     
     #getters para la Ui
     @property
+    def hp_maximo(self):
+        return self._hp_maximo
+    
+    @property
+    def ce_maximo(self):
+        return self._ce_maximo
+    
+    @property
     def tecnicas(self):
         return self._tecnicas
     

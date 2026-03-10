@@ -7,7 +7,7 @@ class InterfazConsola:
     def mostrar_estado(self,hechicero, enemigo):
         print("=" * 40)
         print(f"🧙‍♂️ {hechicero.nombre}")
-        print(f"   HP: {hechicero.hp_actual}/{hechicero._hp_maximo} | CE: {hechicero.ce_actual}/{hechicero._ce_maximo}")
+        print(f"   HP: {hechicero.hp_actual}/{hechicero.hp_maximo} | CE: {hechicero.ce_actual}/{hechicero.ce_maximo}")
         print("-" * 40)
         print(f"👹 {enemigo.nombre}")
         print(f"   HP: {enemigo.hp_actual}")
@@ -18,16 +18,17 @@ class InterfazConsola:
         print("\n¿Qué técnica maldita utilizarás?")
         for i, tecnica in enumerate(tecnicas_disponibles):
             print(f"[{i + 1}] {tecnica.nombre} (Costo CE: {tecnica.costo_ce} | Daño: {tecnica.dano_base})")
-            while True:
-                try:
-                    opcion = input("\nIngresa el número de la técnica: ")
-                    indice = int(opcion) - 1
-                    if 0 <= indice < len(tecnicas_disponibles):
-                        return indice
-                    else:
-                        print(">Error: Elige un número válido de la lista.")
-                except ValueError:
-                    print(">Error: Por favor, ingresa solo números.")
+            
+        while True:
+            try:
+                opcion = input("\nIngresa el número de la técnica: ")
+                indice = int(opcion) - 1
+                if 0 <= indice < len(tecnicas_disponibles):
+                    return indice
+                else:
+                    print(">Error: Elige un número válido de la lista.")
+            except ValueError:
+                print(">Error: Por favor, ingresa solo números.")
         
     
     def mostrar_log(self, mensaje:str):
