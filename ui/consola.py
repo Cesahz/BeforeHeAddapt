@@ -14,21 +14,28 @@ class InterfazConsola:
         print("=" * 40)
         
         
-    def pedir_accion(self, tecnicas_disponibles) -> int:
-        print("\n¿Qué técnica maldita utilizarás?")
-        for i, tecnica in enumerate(tecnicas_disponibles):
+    def pedir_accion(self, hechicero) -> int | str:
+        print("\n¿Qué acción tomarás?")
+        tiene_infinito = hasattr(hechicero, 'alternar_infinito')
+        if tiene_infinito:
+            estado = "ON" if hechicero.infinito_activo else "OFF"
+            print(f"[0] 🛡️  Alternar Infinito (Estado actual: {estado})")
+        for i, tecnica in enumerate(hechicero.tecnicas):
             print(f"[{i + 1}] {tecnica.nombre} (Costo CE: {tecnica.costo_ce} | Daño: {tecnica.dano_base})")
             
         while True:
             try:
-                opcion = input("\nIngresa el número de la técnica: ")
+                opcion = input("\nIngresa tu elección: ")
+                if opcion == "0" and tiene_infinito:
+                    return "INFINITO"
                 indice = int(opcion) - 1
-                if 0 <= indice < len(tecnicas_disponibles):
+                
+                if 0 <= indice < len(hechicero.tecnicas):
                     return indice
                 else:
-                    print(">Error: Elige un número válido de la lista.")
+                    print("> Error: Elige un número válido de la lista.")
             except ValueError:
-                print(">Error: Por favor, ingresa solo números.")
+                print("> Error: Por favor, ingresa solo números.")
         
     
     def mostrar_log(self, mensaje:str):

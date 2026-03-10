@@ -78,14 +78,11 @@ class Gojo(Hechicero):
         self._infinito_activo = not self._infinito_activo
         return self._infinito_activo
     
-    def recibir_dano(self, ataque:Ataque) -> int:
-        if self._infinito_activo:
+    def recibir_dano(self, ataque:Ataque, ignora_infinito: bool = False) -> int:
+        if self._infinito_activo and not ignora_infinito:
             return 0
-        
-        return super(self.recibir_dano(ataque))
-    
-    
-    
+        super().recibir_dano(ataque)
+        return ataque.dano_base
     
 class MaldicionMenor(EntidadCombate):
     def __init__(self):
@@ -147,4 +144,10 @@ class Mahoraga(EntidadCombate):
         #retornar dmg
         return dano_final
         
-        
+    def adaptar_defensa(self,tag: str) -> bool:
+        nivel = self._rueda_adaptacion.get(tag,0)
+        if nivel < 4:
+            self._rueda_adaptacion[tag] = nivel + 1
+            self._giros_totales += 1
+            return True
+        return False
