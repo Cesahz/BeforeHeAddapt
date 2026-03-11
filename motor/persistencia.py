@@ -23,14 +23,14 @@ class GestorGuardado:
             }
         }
         with open(self.archivo, 'w') as f:
-            json.dump(estado, f, indent=4)
+            json.dump(estado, f, indent=4) #cargar en la memoria en json lejible
 
     def cargar(self, jugador, enemigo):
         if not os.path.exists(self.archivo):
             return False
         
         with open(self.archivo, 'r') as f:
-            estado = json.load(f)
+            estado = json.load(f) #proceso inverso, convierte json en diccionario de python
             
         #inyectar los datos guardados directamente
         jugador._hp_actual = estado["jugador"]["hp"]

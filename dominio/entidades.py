@@ -97,8 +97,7 @@ class Gojo(Hechicero):
     def recibir_dano(self, ataque:Ataque, ignora_infinito: bool = False) -> int:
         if self._infinito_activo and not ignora_infinito:
             return 0
-        super().recibir_dano(ataque)
-        return ataque.dano_base
+        return super().recibir_dano(ataque)
     
 class MaldicionMenor(EntidadCombate):
     def __init__(self):

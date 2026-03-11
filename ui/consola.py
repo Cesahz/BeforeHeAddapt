@@ -18,7 +18,7 @@ class InterfazConsola:
     def mostrar_estado(self, hechicero, enemigo):
         # calculo de variables complejas
         hp_e = f"{self._crear_barra(enemigo.hp_actual, enemigo.hp_maximo)} {enemigo.hp_actual}/{enemigo.hp_maximo}"
-        hp_h = f"{self._crear_barra(hechicero.hp_actual, hechicero.hp_maximo)} {hechicero.hp_actual}/{hechicero.hp_maximo}"
+        hp_h = f"{self._crear_barra(hechicero.hp_actual, hechicero.hp_maximo)} {hechicero.hp_actual}/{hechicero.hp_maximo}\n"
         ce_h = f"{self._crear_barra(hechicero.ce_actual, hechicero.ce_maximo)} {hechicero.ce_actual}/{hechicero.ce_maximo}"
         
         # progreso de adaptacion (Bucle tradicional, imposible de malinterpretar)
